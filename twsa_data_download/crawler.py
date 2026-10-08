@@ -104,6 +104,13 @@ class TwsaAuctionCrawler:
         if not btn_name:
             return None
 
+        safe_name = re.sub(r'[\/:*?"<>|]', "_", item.get("case_name", "auction"))
+        file_name = f"{year}_{item.get('seq_no')}_{safe_name}.pdf"
+        file_path = os.path.join(self.download_dir, file_name)
+
+        if os.path.exists(file_path) and os.path.getsize(file_path) > 1000:
+            return file_path
+
         post_data = {
             "__VIEWSTATE": self.viewstate,
             "__VIEWSTATEGENERATOR": self.viewstategenerator,
@@ -118,10 +125,6 @@ class TwsaAuctionCrawler:
 
         content_type = resp.headers.get("Content-Type", "")
         if "pdf" in content_type or resp.content[:4] == b"%PDF":
-            safe_name = re.sub(r'[\/:*?"<>|]', "_", item.get("case_name", "auction"))
-            file_name = f"{year}_{item.get('seq_no')}_{safe_name}.pdf"
-            file_path = os.path.join(self.download_dir, file_name)
-
             with open(file_path, "wb") as f:
                 f.write(resp.content)
             print(f"[下載成功] {file_path}")

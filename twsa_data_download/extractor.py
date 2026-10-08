@@ -69,6 +69,10 @@ class AuctionPdfExtractor:
         """
         針對第 1 頁文字與表格進行正規表示式解析與數據結構化。
         """
+        # 0. 正規化 Unicode (將康熙部首如「最⾼」、「開標⽇期」等自動轉為標準繁體字)
+        import unicodedata
+        text = unicodedata.normalize("NFKC", text)
+
         data: Dict[str, Any] = {
             "company_name": "",          # 公司名稱 (例: 大東電)
             "security_code": "",         # 股票代號 (例: 1623)
@@ -90,13 +94,25 @@ class AuctionPdfExtractor:
             "source_file": file_name,    # 來源檔案
         }
 
-        # 1. 萃取公司名稱、股票代號、發行性質 (例如:「大東電 (1623) 初上市」)
-        title_match = re.search(r"([^\s\(\)]+)\s*\(([0-9A-Za-z]+)\)\s*([^\n\r]*)", text)
-        if title_match:
-            data["company_name"] = title_match.group(1).strip()
-            data["security_code"] = title_match.group(2).strip()
-            data["issue_type"] = title_match.group(3).strip()
-        else:
+        # 1. 萃取公司名稱、股票代號、發行性質 (例如:「大東電 (1623) 初上市」或「尖點三 (80213) 無擔保可轉換公司債」)
+        all_matches = re.findall(r"([^\s\(\)]+)\s*\(([0-9A-Za-z]+)\)\s*([^\n\r]*)", text)
+        for name_cand, code_cand, type_cand in all_matches:
+            name_cand = name_cand.strip()
+            code_cand = code_cand.strip()
+            if not any(k in name_cand for k in ["報表", "統計表", "系統", "T004"]) and code_cand != "T004":
+                data["company_name"] = name_cand
+                data["security_code"] = code_cand
+                data["issue_type"] = type_cand.strip()
+                break
+
+        if not data["company_name"]:
+            # 備援比對無括號格式，例如：「浩宇生醫 初上櫃」或「光焱科技 初上櫃」
+            alt_title = re.search(r"^([^\s\(\)]+)\s+(初次?上[櫃市]|創新板[^\n\r]*|現增[^\n\r]*)", text, re.MULTILINE)
+            if alt_title:
+                data["company_name"] = alt_title.group(1).strip()
+                data["issue_type"] = alt_title.group(2).strip()
+
+        if not data["company_name"]:
             # 備援比對格式：有價證券名稱： 1623 大東電
             alt_match = re.search(r"(?:有價證券名稱|標案名稱)[：:\s]+([0-9A-Za-z]+)?\s*([^\n\r]+)", text)
             if alt_match:
