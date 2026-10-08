@@ -1,0 +1,28 @@
+[project]
+name = "twsa-data-download"
+version = "0.1.0"
+description = "台灣證券商同業公會（TWSA）歷年台股競拍開標紀錄下載與 PDF 數據萃取工具"
+authors = [
+    {name = "Cheng-Jiun", email = "chengjiun.ma@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "requests (>=2.31.0,<3.0.0)",
+    "beautifulsoup4 (>=4.12.0,<5.0.0)",
+    "pdfplumber (>=0.10.0,<0.12.0)",
+    "pypdf (>=3.17.0,<4.0.0)",
+    "pandas (>=2.0.0,<3.0.0)",
+    "openpyxl (>=3.1.0,<4.0.0)",
+]
+
+[project.scripts]
+twsa-crawler = "twsa_data_download.crawler:main"
+twsa-extractor = "twsa_data_download.extractor:main"
+
+[tool.poetry]
+packages = [{include = "twsa_data_download"}]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
