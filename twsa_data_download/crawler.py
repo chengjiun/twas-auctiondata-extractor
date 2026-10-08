@@ -81,8 +81,9 @@ class TwsaAuctionCrawler:
             if len(cols) < 5:
                 continue
 
-            download_input = row.find("input", {"type": "image"})
-            btn_name = download_input.get("name") if download_input else None
+            # 若該列有多個按鈕，選取最後一個（第二個才是「開標紀錄」）
+            download_inputs = row.find_all("input", {"type": "image"})
+            btn_name = download_inputs[-1].get("name") if download_inputs else None
 
             item_info = {
                 "seq_no": cols[0].get_text(strip=True),

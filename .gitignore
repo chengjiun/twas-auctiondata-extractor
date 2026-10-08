@@ -37,7 +37,6 @@ venv.bak/
 poetry.lock
 
 # Downloads & output
-twsa_data_download/
 downloaded_pdfs/
 *.pdf
 output/

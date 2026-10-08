@@ -8,16 +8,18 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
-    "requests (>=2.31.0,<3.0.0)",
-    "beautifulsoup4 (>=4.12.0,<5.0.0)",
+    "playwright (>=1.40.0,<2.0.0)",
     "pdfplumber (>=0.10.0,<0.12.0)",
     "pypdf (>=3.17.0,<4.0.0)",
     "pandas (>=2.0.0,<3.0.0)",
     "openpyxl (>=3.1.0,<4.0.0)",
+    "requests (>=2.31.0,<3.0.0)",
+    "beautifulsoup4 (>=4.12.0,<5.0.0)",
 ]
 
 [project.scripts]
-twsa-crawler = "twsa_data_download.crawler:main"
+twsa-pipeline = "run_pipeline:main"
+twsa-crawler = "twsa_data_download.crawler_playwright:main"
 twsa-extractor = "twsa_data_download.extractor:main"
 
 [tool.poetry]

@@ -6,6 +6,7 @@ twsa_data_download
 
 from .extractor import AuctionPdfExtractor
 from .crawler import TwsaAuctionCrawler
+from .crawler_playwright import TwsaPlaywrightCrawler
 
-__all__ = ["AuctionPdfExtractor", "TwsaAuctionCrawler"]
+__all__ = ["AuctionPdfExtractor", "TwsaAuctionCrawler", "TwsaPlaywrightCrawler"]
 __version__ = "0.1.0"
