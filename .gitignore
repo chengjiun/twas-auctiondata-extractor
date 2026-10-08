@@ -38,6 +38,10 @@ poetry.lock
 
 # Downloads & output
 downloaded_pdfs/
+recent_10_pdfs/
+test_download/
+test_prospectus/
+test_recent/
 *.pdf
 output/
 

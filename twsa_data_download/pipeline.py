@@ -39,13 +39,16 @@ class AuctionPipeline:
     def __init__(
         self,
         download_dir: str = "./downloaded_pdfs",
-        output_csv: str = "auction_records.csv",
+        output_csv: str = "./output/auction_records.csv",
     ):
         self.download_dir = download_dir
         self.output_csv = output_csv
         self.extractor = AuctionPdfExtractor()
         self.prospectus_extractor = ProspectusExtractor()
         os.makedirs(self.download_dir, exist_ok=True)
+        csv_dir = os.path.dirname(self.output_csv)
+        if csv_dir:
+            os.makedirs(csv_dir, exist_ok=True)
 
     def run_requests_engine(
         self,
@@ -262,6 +265,10 @@ class AuctionPipeline:
         existing_cols = [c for c in column_mapping.keys() if c in df.columns]
         df_export = df[existing_cols].rename(columns=column_mapping)
 
+        csv_dir = os.path.dirname(self.output_csv)
+        if csv_dir:
+            os.makedirs(csv_dir, exist_ok=True)
+
         df_export.to_csv(self.output_csv, index=False, encoding="utf-8-sig")
         logger.info(f"==================================================")
         logger.info(f"【量化報表匯出成功】共 {len(df_export)} 筆競拍開標全維度紀錄儲存至: {self.output_csv}")
@@ -272,7 +279,7 @@ def main():
     parser = argparse.ArgumentParser(description="TWSA 台股競拍開標與量化指標全自動萃取管線")
     parser.add_argument("--year", default="2025", help="查詢年份 (預設: 2025，可為單一年份或逗號分隔列表如 2026,2025)")
     parser.add_argument("--limit", type=int, default=60, help="下載最近 N 筆開標紀錄 (預設: 60)")
-    parser.add_argument("--output-csv", default="auction_records.csv", help="輸出 CSV 檔名")
+    parser.add_argument("--output-csv", default="./output/auction_records.csv", help="輸出 CSV 檔名 (預設: ./output/auction_records.csv)")
     parser.add_argument("--download-dir", default="./downloaded_pdfs", help="PDF 儲存目錄")
     args = parser.parse_args()
 

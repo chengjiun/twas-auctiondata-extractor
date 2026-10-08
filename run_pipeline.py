@@ -4,15 +4,15 @@
 run_pipeline.py
 ---------------
 端到端一鍵執行腳本：
-1. 啟動 Playwright 自動化爬蟲瀏覽 TWSA 公告系統。
-2. 篩選年度與競拍公告，處理 ASP.NET 動態分頁。
-3. 下載每筆標案最後一欄的「開標紀錄」PDF。
-4. 嚴格萃取每個 PDF 的第 1 頁核心指標（公司名稱、最低/最高/加權平均得標價等）。
-5. 自動彙整並輸出乾淨的 CSV 報表 (auction_records.csv)。
+1. 查詢 TWSA 證券商同業公會競拍公告系統。
+2. 下載每筆標案之「開標統計表」與「招標說明書」雙重 PDF。
+3. 嚴格萃取第 1 頁開標核心統計與招標說明書之發券日、競標張數、公開申購與員工認購配售張數。
+4. 計算量化投資指標（交割持有天數、投標倍數、溢價率等）。
+5. 自動將結構化 CSV 報表匯出至專屬目錄 (預設: ./output/auction_records.csv)。
 """
 
 import sys
-from twsa_data_download.crawler_playwright import main
+from twsa_data_download.pipeline import main
 
 if __name__ == "__main__":
     main()
