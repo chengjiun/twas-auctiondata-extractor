@@ -62,8 +62,17 @@ class TwsaAuctionCrawler:
             "ctl00$cphMain$rblReportType": report_type,
         }
 
-        resp = self.session.post(self.BASE_URL, data=form_data, timeout=30)
-        resp.raise_for_status()
+        for attempt in range(3):
+            try:
+                resp = self.session.post(self.BASE_URL, data=form_data, timeout=30)
+                resp.raise_for_status()
+                break
+            except Exception as e:
+                if attempt < 2:
+                    time.sleep(1.5)
+                else:
+                    raise e
+
         self._extract_aspnet_fields(resp.text)
         return resp.text
 
@@ -120,8 +129,16 @@ class TwsaAuctionCrawler:
             f"{btn_name}.y": "10",
         }
 
-        resp = self.session.post(self.BASE_URL, data=post_data, timeout=30)
-        resp.raise_for_status()
+        for attempt in range(3):
+            try:
+                resp = self.session.post(self.BASE_URL, data=post_data, timeout=30)
+                resp.raise_for_status()
+                break
+            except Exception as e:
+                if attempt < 2:
+                    time.sleep(1.5)
+                else:
+                    raise e
 
         content_type = resp.headers.get("Content-Type", "")
         if "pdf" in content_type or resp.content[:4] == b"%PDF":

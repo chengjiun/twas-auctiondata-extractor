@@ -53,15 +53,24 @@ poetry install
 執行以下指令，腳本將自動查詢指定年份公告，由最新標案開始向前掃描，**自動略過尚未開標之標案，精準下載並萃取「開標統計表 + 招標說明書」雙重 PDF**：
 
 ```bash
-# 抓取 2025 年 60 筆競拍開標與說明書數據 (涵蓋公開申購、員工內部認購與可轉債案件)
+# 1. 一鍵全量批次產製：取得 2009 年至今 (民國 98~115 年) 所有歷年資料，每年獨立匯出一個 CSV 檔案
+poetry run python run_pipeline.py --all-years
+
+# 2. 依自訂年份範圍批次產製：
+poetry run python run_pipeline.py --start-year 2016 --end-year 2026 --yearly
+
+# 3. 抓取單一年份 (例如 2025 年最近 60 筆)：
 poetry run python run_pipeline.py --year 2025 --limit 60 --output-csv output/auction_records.csv
 
-# 抓取 2026 最新標案 (大多為轉換公司債全數競拍)
+# 4. 抓取最新年度標案：
 poetry run python run_pipeline.py --year 2026 --limit 50 --output-csv output/auction_records_2026.csv
-
-# 支援跨年份查詢 (例如 2026 與 2025 連續追溯)
-poetry run python run_pipeline.py --year 2026,2025 --limit 50 --output-csv output/auction_records.csv
 ```
+
+### 匯出檔案清單 (`output/` 目錄)
+執行 `--all-years` 後，將在 [`output/`](file:///Volumes/XPG1TP-MAC/homeX/chengjiun/workspace/aiworks/twsa-data-download/output/) 自動生成各年份獨立 CSV 以及歷史合併總表：
+- `output/auction_records_2009.csv` 至 `output/auction_records_2026.csv`（每年各一個獨立 CSV，即使該年無紀錄亦具備完整 33 欄位標準標頭）
+- `output/auction_records_2009_2026_all.csv`（歷年全量合併總表）
+- `output/auction_records.csv`（最新全量總表）
 
 ---
 
